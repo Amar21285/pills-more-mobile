@@ -19,11 +19,20 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> _loadStoredSession() async {
-    final prefs = await SharedPreferences.getInstance();
-    _token = prefs.getString('auth_token');
-    final userStr = prefs.getString('auth_user');
-    if (userStr != null) {
-      _user = jsonDecode(userStr);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _token = prefs.getString('auth_token');
+      final userStr = prefs.getString('auth_user');
+      if (userStr != null) {
+        _user = jsonDecode(userStr);
+      }
+    } catch (e) {
+      print('[AUTH SESSION ERROR] Failed to load stored session: $e');
+      // Clear corrupted cache to prevent repeated crashes
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
+      } catch (_) {}
     }
     notifyListeners();
   }
