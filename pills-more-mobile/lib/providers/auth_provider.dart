@@ -137,7 +137,11 @@ class AuthProvider extends ChangeNotifier {
     await prefs.remove('auth_token');
     await prefs.remove('auth_user');
     try {
-      await _googleSignIn.signOut();
+      final googleSignIn = GoogleSignIn(
+        clientId: kIsWeb ? 'your-google-client-id-here.apps.googleusercontent.com' : null,
+        scopes: ['email'],
+      );
+      await googleSignIn.signOut();
     } catch (e) {
       // Ignore signout error if not signed in with Google
     }
