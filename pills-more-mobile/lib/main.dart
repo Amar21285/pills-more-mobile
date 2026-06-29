@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
@@ -17,6 +18,55 @@ class MyHttpOverrides extends HttpOverrides {
 void main() {
   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Show a red screen with details instead of crashing on layout errors
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('App Error Details'),
+          backgroundColor: Colors.redAccent,
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(Icons.error_outline, color: Colors.red, size: 48),
+              const SizedBox(height: 16),
+              const Text(
+                'An unexpected layout error occurred in the app:',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              const SizedBox(height: 8),
+              SelectableText(
+                details.exception.toString(),
+                style: const TextStyle(color: Colors.red, fontFamily: 'monospace', fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Stack Trace:',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              SelectableText(
+                details.stack.toString(),
+                style: const TextStyle(fontSize: 11, fontFamily: 'monospace'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  };
+
+  // Prevent crash on async/platform errors
+  PlatformDispatcher.instance.onError = (error, stack) {
+    debugPrint('[GLOBAL ASYNC ERROR] $error\n$stack');
+    return true; // Return true to prevent app crash
+  };
+
   runApp(const MyApp());
 }
 
