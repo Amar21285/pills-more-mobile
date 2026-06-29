@@ -27,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String _searchQuery = '';
   final _searchController = TextEditingController();
 
-  String _currentLocation = '📍 Detect location...';
+  String _currentLocation = '📍 Tap to detect location';
   bool _isLocating = false;
   Map<String, dynamic>? _settings;
 
@@ -40,7 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _bannerPageController = PageController(initialPage: 0);
     _loadData();
-    _updateLocation(silent: true);
   }
 
   @override

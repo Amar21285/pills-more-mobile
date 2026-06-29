@@ -78,19 +78,18 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    // Pass clientId only on Web to prevent startup assertion crash.
-    // On Android/iOS, it is read from the Google Services config files automatically.
-    clientId: kIsWeb ? 'your-google-client-id-here.apps.googleusercontent.com' : null,
-    scopes: ['email'],
-  );
-
   Future<String?> signInWithGoogle() async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        // Pass clientId only on Web to prevent startup assertion crash.
+        // On Android/iOS, it is read from the Google Services config files automatically.
+        clientId: kIsWeb ? 'your-google-client-id-here.apps.googleusercontent.com' : null,
+        scopes: ['email'],
+      );
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
       if (googleUser == null) {
         _isLoading = false;
         notifyListeners();
