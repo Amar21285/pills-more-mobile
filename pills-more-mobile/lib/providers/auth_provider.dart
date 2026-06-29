@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../services/api_service.dart';
@@ -78,9 +79,9 @@ class AuthProvider extends ChangeNotifier {
   }
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
-    // Added placeholder clientId to prevent app crash on Web/Desktop.
-    // Replace with your real Google Client ID from Google Cloud Console.
-    clientId: 'your-google-client-id-here.apps.googleusercontent.com',
+    // Pass clientId only on Web to prevent startup assertion crash.
+    // On Android/iOS, it is read from the Google Services config files automatically.
+    clientId: kIsWeb ? 'your-google-client-id-here.apps.googleusercontent.com' : null,
     scopes: ['email'],
   );
 
