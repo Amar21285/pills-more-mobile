@@ -69,6 +69,9 @@ class AuthProvider extends ChangeNotifier {
   }
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
+    // Added placeholder clientId to prevent app crash on Web/Desktop.
+    // Replace with your real Google Client ID from Google Cloud Console.
+    clientId: 'your-google-client-id-here.apps.googleusercontent.com',
     scopes: ['email'],
   );
 

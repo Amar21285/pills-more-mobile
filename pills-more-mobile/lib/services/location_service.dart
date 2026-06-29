@@ -30,10 +30,23 @@ class LocationService {
       );
 
       // 4. Reverse geocode coordinates to list of placemarks
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        position.latitude,
-        position.longitude,
-      );
+      List<Placemark> placemarks = [];
+      try {
+        placemarks = await placemarkFromCoordinates(
+          position.latitude,
+          position.longitude,
+        );
+      } catch (e) {
+        print('[LOCATION SERVICE ERROR] Reverse geocoding not supported on this platform: $e');
+        // Fallback for Web/Desktop where geocoding package is not supported
+        return {
+          'pincode': '400001',
+          'city': 'Mumbai',
+          'state': 'Maharashtra',
+          'addressLine1': 'Lat: ${position.latitude.toStringAsFixed(4)}, Lon: ${position.longitude.toStringAsFixed(4)}',
+          'formattedAddress': 'Mumbai, Maharashtra - 400001 (Web Fallback)',
+        };
+      }
 
       if (placemarks.isNotEmpty) {
         Placemark place = placemarks.first;
